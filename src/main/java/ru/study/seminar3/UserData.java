@@ -64,14 +64,16 @@ class UserData {
                     && element.length() > 5 && element.length() < 12
                     && this.phone == null) {
                 this.phone = Long.parseLong(element);
-            } else if (this.birthday == null && element.length() == birthdayFormat.length()) {
-                this.birthday = parseDateOrNull(element);
             } else if (this.surname == null && canBeName(element)) {
                 this.surname = element;
             } else if (this.name == null && canBeName(element)) {
                 this.name = element;
             } else if (this.patronymic == null && canBeName(element)) {
                 this.patronymic = element;
+            } else if (this.birthday == null && element.length() == birthdayFormat.length()) {
+                // TODO: too weak value check (need more precise condition)
+                //   now lower condition to last place via it conflicts with name parts because checks only string length
+                this.birthday = parseDateOrNull(element);
             } else {
                 // TODO: mark all name parts as errors if catch any empty name field after parsing attempt?
                 //    'correct_surname, incorrect_name, correct_patronymic' not produces 'correct_name, incorrect_patronymic_as_name, empty_patronymic'
