@@ -1,8 +1,12 @@
 package ru.study.seminar3;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +24,7 @@ class UserData {
     private String birthdayFormat = "dd.MM.yyyy";
     private String nameValidatePattern = "^[a-zA-Zа-яА-Я]+$";
     private String noDataMessage = "No data";
+    private String defaultFilePath = String.join(File.separator, Arrays.asList("data", "seminar3"));
 
 
 
@@ -153,5 +158,24 @@ class UserData {
                 ", birthday='" + getBirthdayString() + "'" +
                 ", phone='" + getPhoneString() + "'" +
                 ", gender='" + getGenderString() + "'";
+    }
+
+    private String toLine() {
+        return getSurnameString() + " " + getNameString() + " " + getPatronymicString() + " " +
+                getBirthdayString() + " " + getPhoneString() + " " + getGenderString();
+    }
+
+    public void toFile() throws IOException {
+        this.toFile(this.defaultFilePath + File.separator + this.surname);
+    }
+
+    public void toFile(String path) throws IOException {
+        // TODO: fail if exec before parseUserInput()
+        try (FileWriter fw = new FileWriter(path, true)) {
+            fw.write(this.toLine() + "\n");
+        } catch (IOException e) {
+            // let's assume that there will be something at this place
+            throw new IOException(e);
+        }
     }
 }
