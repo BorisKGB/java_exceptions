@@ -31,16 +31,14 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         // запрашивать у пользователя следующие данные в произвольном порядке, разделенные пробелом
-        String userInput = null;
         System.out.println("Введите данные разделённые пробелом (Фамилия Имя Отчество датарождения номертелефона пол)");
         Scanner scanner = new Scanner(System.in);
 
-        userInput = scanner.nextLine();
+        UserData data = new UserData(scanner.nextLine());
 
         // Приложение должно проверить введенные данные по количеству.
-        String[] elements = userInput.split(" ");
         // Если количество не совпадает с требуемым, вернуть код ошибки
-        int elementsSizeValid =  elSizeCheck(elements);
+        int elementsSizeValid = data.inputLengthValid();
 
         // обработать его и показать пользователю сообщение, что он ввел меньше и больше данных, чем требуется.
         if (elementsSizeValid == -1) {
@@ -56,19 +54,5 @@ public class Main {
         // Если форматы данных не совпадают, нужно бросить исключение, соответствующее типу проблемы.
         // Можно использовать встроенные типы java и создать свои.
         // Исключение должно быть корректно обработано, пользователю выведено сообщение с информацией, что именно неверно.
-    }
-
-    /**
-     * Validate data size
-     * @param data
-     * @return data.length or (negative) error code
-     * -1 if el size is too low
-     * -2 if el size is too big
-     */
-    private static int elSizeCheck(String[] data) {
-        int size = data.length;
-        if (size < 6) size = -1;
-        else if (size > 6) size = -2;
-        return size;
     }
 }
