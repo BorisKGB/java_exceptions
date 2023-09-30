@@ -19,6 +19,7 @@ class UserData {
     private String inputDelimiter = " ";
     private String birthdayFormat = "dd.MM.yyyy";
     private String nameValidatePattern = "^[a-zA-Zа-яА-Я]+$";
+    private String noDataMessage = "No data";
 
 
 
@@ -57,9 +58,9 @@ class UserData {
      *  2. Phone number must contain only numbers and its length may be in [5 ... 12] digits
      *  3. Birthday must be date in this.birthdayFormat
      *  4. Name parts must match this.nameValidatePattern (letters only)
-     * @throws ?Exception if not all data was parsed
+     * @throws ParseException if not all data was parsed
      */
-    public void parseUserInput() {
+    public void parseUserInput() throws ParseException {
         List<String> failedToParseParts = new LinkedList<>();
         for (String element : userInputParts) {
             if (element.length() == 1 && this.gender == null) {
@@ -68,7 +69,7 @@ class UserData {
                     && element.length() > 5 && element.length() < 12
                     && this.phone == null) {
                 this.phone = Long.parseLong(element);
-            } else if (this.birthday == null) {
+            } else if (this.birthday == null && element.length() == birthdayFormat.length()) {
                 this.birthday = parseDateOrNull(element);
             } else if (this.surname == null && canBeName(element)) {
                 this.surname = element;
@@ -81,7 +82,10 @@ class UserData {
             }
         }
         if (!failedToParseParts.isEmpty()) {
-            throw new RuntimeException("Not implemented");
+            String errorMsg = "Unable to parse fields [" + String.join(",", failedToParseParts) + "].\n" +
+                    "Current parsed state is " + this;
+            // TODO: Use custom exception? (errorOffset parameter used as error fields count)
+            throw new ParseException(errorMsg, failedToParseParts.size());
         }
     }
 
@@ -93,6 +97,7 @@ class UserData {
             return false;
         }
     }
+
     private boolean canBeName(String str) {
         return str.matches(nameValidatePattern);
     }
@@ -111,5 +116,42 @@ class UserData {
             result = null;
         }
         return result;
+    }
+
+    public String getSurnameString() {
+        return (surname == null) ? this.noDataMessage : surname;
+    }
+
+    public String getNameString() {
+        return (name == null) ? this.noDataMessage : name;
+    }
+
+    public String getPatronymicString() {
+        return (patronymic == null) ? this.noDataMessage : patronymic;
+    }
+
+    public String getBirthdayString() {
+        if (birthday == null) return this.noDataMessage;
+        else {
+            DateFormat df = new SimpleDateFormat(this.birthdayFormat);
+            return df.format(birthday);
+        }
+    }
+
+    public String getPhoneString() {
+        return (phone == null) ? this.noDataMessage : phone.toString();
+    }
+
+    public String getGenderString() {
+        return (gender == null) ? this.noDataMessage : gender.toString();
+    }
+    @Override
+    public String toString() {
+        return "surname='" + getSurnameString() + "'" +
+                ", name='" + getNameString() + "'" +
+                ", patronymic='" + getPatronymicString() + "'" +
+                ", birthday='" + getBirthdayString() + "'" +
+                ", phone='" + getPhoneString() + "'" +
+                ", gender='" + getGenderString() + "'";
     }
 }

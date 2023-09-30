@@ -26,12 +26,13 @@ package ru.study.seminar3;
 При возникновении проблемы с чтением-записью в файл, исключение должно быть корректно обработано, пользователь должен увидеть стектрейс ошибки.
  */
 
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         // запрашивать у пользователя следующие данные в произвольном порядке, разделенные пробелом
-        System.out.println("Введите данные разделённые пробелом (Фамилия Имя Отчество датарождения номертелефона пол)");
+        System.out.println("Please input your data separated by spaces (Фамилия Имя Отчество датарождения номертелефона пол)");
         Scanner scanner = new Scanner(System.in);
 
         UserData data = new UserData(scanner.nextLine());
@@ -42,17 +43,21 @@ public class Main {
 
         // обработать его и показать пользователю сообщение, что он ввел меньше и больше данных, чем требуется.
         if (elementsSizeValid == -1) {
-            System.out.println("Вы ввели недостаточное количество полей");
+            System.out.println("Insufficient fields have been entered");
             System.exit(1);
         } else if (elementsSizeValid == -2) {
-            System.out.println("Вы ввели слишком много полей");
+            System.out.println("Too many fields have been entered");
             System.exit(1);
         }
 
         // Приложение должно попытаться распарсить полученные значения и выделить из них требуемые параметры.
-        data.parseUserInput();
         // Если форматы данных не совпадают, нужно бросить исключение, соответствующее типу проблемы.
         // Можно использовать встроенные типы java и создать свои.
         // Исключение должно быть корректно обработано, пользователю выведено сообщение с информацией, что именно неверно.
+        try {
+            data.parseUserInput();
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
