@@ -47,11 +47,6 @@ class UserData {
         return size;
     }
 
-    // Приложение должно попытаться распарсить полученные значения и выделить из них требуемые параметры.
-    // Если форматы данных не совпадают, нужно бросить исключение, соответствующее типу проблемы.
-    // Можно использовать встроенные типы java и создать свои.
-    // Исключение должно быть корректно обработано, пользователю выведено сообщение с информацией, что именно неверно.
-
     /**
      * parse and validate userInputParts against rules
      *  1. Gender must contain only one symbol
@@ -78,6 +73,8 @@ class UserData {
             } else if (this.patronymic == null && canBeName(element)) {
                 this.patronymic = element;
             } else {
+                // TODO: mark all name parts as errors if catch any empty name field after parsing attempt?
+                //    'correct_surname, incorrect_name, correct_patronymic' not produces 'correct_name, incorrect_patronymic_as_name, empty_patronymic'
                 failedToParseParts.add(element);
             }
         }
@@ -111,6 +108,7 @@ class UserData {
         DateFormat df = new SimpleDateFormat(birthdayFormat);
         Date result;
         try {
+            // TODO: validate Date value against current date? Now can input 10.10.1000 for example
             result = df.parse(str);
         } catch (ParseException e) {
             result = null;
